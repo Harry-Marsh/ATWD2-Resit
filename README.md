@@ -36,7 +36,13 @@ Task 1:
 Task 2:
 <a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/normalise-to-xml.php">normalise-to-xml.php</a>
  & 
-<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/normalise-to-xml.php">normalise-to-xml.php</a> 
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/air-quality.xsd">air-quality.xsd</a> 
+<br />
+
+Task 3:
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/normalise-to-xml.php">no file yet</a>
+ & 
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/air-quality.xsd">no file yet</a> 
 <br />
 
 <!-- CONTACT -->
