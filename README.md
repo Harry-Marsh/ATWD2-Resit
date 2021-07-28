@@ -3,7 +3,7 @@
   <p align="center">
     Resit Submission location for ATWD2
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Harry-Marsh/ATWD2-Resit"><strong>Explore the docs »</strong></a>
     <br />
   </p>
 </p>
