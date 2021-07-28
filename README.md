@@ -29,6 +29,15 @@
 
 <!-- RELATED FILES -->
 ## Related Files
+Task 1:
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/extract-to-csv.php">extract-to-csv.php</a>
+<br />
+
+Task 2:
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/normalise-to-xml.php">normalise-to-xml.php</a>
+ & 
+<a href="https://github.com/Harry-Marsh/ATWD2-Resit/blob/main/normalise-to-xml.php">normalise-to-xml.php</a> 
+<br />
 
 <!-- CONTACT -->
 ## Contact
