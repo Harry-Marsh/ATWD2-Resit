@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+elementFormDefault="qualified" 
+attributeFormDefault="unqualified">
+
   <xs:element name="station">
     <xs:complexType>
       <xs:sequence>
@@ -12,6 +16,7 @@
           </xs:complexType>
         </xs:element>
       </xs:sequence>
+      
       <xs:attribute name="id" use="optional">
         <xs:simpleType>
             <xs:restriction base="xs:int">
@@ -35,12 +40,10 @@
                 <xs:enumeration  value="501"/>
             </xs:restriction>
         </xs:simpleType>
+
 	  </xs:attribute>
       <xs:attribute name="name" type="xs:string" use="optional"></xs:attribute>
       <xs:attribute name="geocode" type="xs:string" use="optional"></xs:attribute>
     </xs:complexType>
   </xs:element>
 </xs:schema>
-<!-- Module: Advanced topics in web development 2 -->
-<!-- Module leader: Prakash Chatterjee -->
-<!-- Author: George Greenfield - 17025822 -->

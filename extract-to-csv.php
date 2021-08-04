@@ -10,6 +10,9 @@ ini_set('memory_limit', '512M');
 ini_set('max_execution_time', '300');
 ini_set('auto_detect_line_endings', TRUE);
 
+//setting ordered header in each file
+$CSVHeaders = array('siteID', 'ts', 'nox', 'no2', 'no', 'pm10', 'nvpm10', 'vpm10', 'nvpm2.5', 'pm2.5', 'vpm2.5', 'co', 'o3', 'so2', 'loc', 'lat', 'long');
+
 //Open the source file.
 $fileHandler = fopen("air-quality-data-2004-2019.csv", "r");
 
@@ -32,10 +35,6 @@ $Station_463 = fopen('data_463.csv', 'w');
 $Station_481 = fopen('data_481.csv', 'w');
 $Station_500 = fopen('data_500.csv', 'w');
 $Station_501 = fopen('data_501.csv', 'w');
-
-//setting ordered header in each file
-$CSVHeaders = array('siteID', 'ts', 'nox', 'no2', 'no', 'pm10', 'nvpm10', 'vpm10', 'nvpm2.5', 'pm2.5', 'vpm2.5', 'co', 'o3', 'so2', 'loc', 'lat', 'long');
-
 //array of open files
 $dataFile = array($Station_188,$Station_203,$Station_206,$Station_209,$Station_213,$Station_215,$Station_228,$Station_270,$Station_271,$Station_375,$Station_395,$Station_447,$Station_452,$Station_459,$Station_463,$Station_481,$Station_500,$Station_501);
 

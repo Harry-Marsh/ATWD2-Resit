@@ -2,180 +2,155 @@
 //store starting time of process
 $startTime = microtime(TRUE);
 
+//array of data file names
+$station_list = array('data_188', 'data_203', 'data_206', 'data_209', 'data_213', 'data_215', 'data_228', 'data_270', 'data_271', 'data_375', 'data_395', 'data_447', 'data_452', 'data_459', 'data_463', 'data_481', 'data_500', 'data_501');
+
 //Function for Conversion
-function Normilise($SourceCSVFile, $GeneratedXMLFile) {
+function Normilise($SourceCSVFile, $CreatedXMLFile) {
 	
 	//Open the source file.
 	$inputtedCSVFile  = fopen($SourceCSVFile, 'rt');
-		
+	
 	//setting the encoding of the xml file and creating a new document.
-	$XMLDoc  = new DomDocument('1.0',"UTF-8");
-	$XMLDoc->formatOutput = true;
+	$XMLFile  = new DomDocument('1.0',"UTF-8");
+	$XMLFile->formatOutput = true;
 	
-	//getting the second line of the csv file
+	//getting the first line of the csv file to skip headers
 	$FileRow = fgets($inputtedCSVFile);
-	
-    //exploding the row stored to identifiy individual elements as columns
+
+	//getting first line value to be Normalised
+	$FileRow = fgets($inputtedCSVFile);
+
+    //exploding the row sto red to identifiy individual elements as columns
 	[$siteID,$ts,$nox,$no2,$no,$PM10,$NVPM10,$VPM10,$NVPM2_5,$PM2_5,$VPM2_5,$CO,$O3,$SO2,$location,$lat,$long] = explode(',', $FileRow);
 
     //replaceing the FileRow from a string to an array of elements.
 	$FileRow = array($siteID,$ts,$nox,$no2,$no,$PM10,$NVPM10,$VPM10,$NVPM2_5,$PM2_5,$VPM2_5,$CO,$O3,$SO2,$location,$lat,$long);
 	
 	//creating the root element for the station.
-	$rootElement = $XMLDoc->createElement('station');
+	$root = $XMLFile->createElement('station');
 	
-
     //checks for empty values in the siteID column
 	if ($FileRow[0] != null){
-       $rootAttribute = $XMLDoc -> createAttribute('id'); //create new atribite of 'id'
-        $rootAttribute -> value = $FileRow[0]; //set atributes value to the value of the siteID
-		$rootElement -> appendChild($rootAttribute);
+       $attribute = $XMLFile -> createAttribute('id'); //create new atribite of 'id'
+        $attribute -> value = $FileRow[0]; //set atributes value to the value of the siteID
+		$root -> appendChild($attribute);
 	}
 	
-
-
-///////////////////////////////////////
-
 	//Creating the element of name for the station record
 	if ($FileRow[14] != null){
-		$rootAttribute = $XMLDoc -> createAttribute('name');
+		$attribute = $XMLFile -> createAttribute('name');
 		
-			
-		// Add extra measures
-		// to catch any special
-		// characters in
-		// data.
-		$ampersand_catch = $FileRow[14];
-		$updated_name = str_replace('&', '&amp;', $ampersand_catch);
-		$character_catch = $updated_name;
-		$name = str_replace('"', '', $character_catch);
-		$rootAttribute -> value = $name;
-		$rootElement -> appendChild($rootAttribute);
+		//converting '&' symbol to '$amp' for veiwing on web	
+		$FileRow[14] = str_replace('&', '&amp;', $FileRow[14]);
+        $FileRow[14] = str_replace('"', '', $FileRow[14]);
+        $attribute -> value = $FileRow[14];
+    	$root -> appendChild($attribute);
 	}
 	
-
-
-
-
+	//checks if there is a geocode in the line
 	if ($FileRow[15] != null){
-		$rootAttribute = $XMLDoc -> createAttribute('geocode');
-		// Special character
-		// check for blank
-		// lines in names.
-		$character_catch = $FileRow[15].','.$FileRow[16];
-		$geocode = substr($character_catch,0,-1);
-		$rootAttribute -> value = $geocode;
-		$rootElement -> appendChild($rootAttribute);
+		$attribute = $XMLFile -> createAttribute('geocode'); // creates a new attribute of station for coordanates 
+
+		$InvalidCharacterCatch = $FileRow[15].','.$FileRow[16]; //checking that the coordinates have been successfully exploded into lat and long
+		$StationGeocode = substr($InvalidCharacterCatch,0,-1);
+		$attribute -> value = $StationGeocode;
+		$root -> appendChild($attribute); // append to root
 	}
 	
-	// Finish root element
-	// and append root to document.
-	$XMLDoc -> appendChild($rootElement);
+	//creation of the record now that the root has benn generated 
+	$XMLFile -> appendChild($root);
+
+	if ($FileRow[2] != null) {
+		//create new child element of stations
+		$child = $XMLFile -> createElement('rec');
+	
+		$childAttrabutes = $XMLFile -> createAttribute('ts'); //creating a timestamp attribute
+		$childAttrabutes -> value = $FileRow[1]; //getting the value from the correct varible in the line
+		$child -> appendChild($childAttrabutes);
+		
+		$childAttrabutes = $XMLFile -> createAttribute('nox'); //creating a nox attribute
+		$childAttrabutes -> value = $FileRow[2]; //getting the value from the correct varible in the line
+		$child -> appendChild($childAttrabutes);
+		
+		if ($FileRow[3] != null){
+			$childAttrabutes = $XMLFile -> createAttribute('no'); //creating a no attribute
+			$childAttrabutes -> value = $FileRow[3]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
+		}
+		
+		if ($FileRow[4] != null){
+			$childAttrabutes = $XMLFile -> createAttribute('no2'); //creating a no2 attribute
+			$childAttrabutes -> value = $FileRow[4]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
+		}
+		//append the child to the root
+		$root -> appendChild($child);
+
+
+
+	}
 	
 	while (($FileRow = fgets($inputtedCSVFile)) !== FALSE)
 	{
 	
-		// Same principle as
-		// root element, get
-		// line and split
-		// data and store to 
-		// array.
-		list($siteID,$ts,$nox,$no2,$no,$PM10,$NVPM10,$VPM10,$NVPM2_5,$PM2_5,$VPM2_5,$CO,$O3,$SO2,$location,$lat,$long) = explode(',', $FileRow);
-	
+		//exploding the file row of each extracted csv file
+		[$siteID,$ts,$nox,$no2,$no,$PM10,$NVPM10,$VPM10,$NVPM2_5,$PM2_5,$VPM2_5,$CO,$O3,$SO2,$location,$lat,$long] = explode(',', $FileRow);
+		//assigning in an array
 		$FileRow = array($siteID,$ts,$nox,$no2,$no,$PM10,$NVPM10,$VPM10,$NVPM2_5,$PM2_5,$VPM2_5,$CO,$O3,$SO2,$location,$lat,$long);
 		
 		//checks if there is data in the 3rd column before continuing.
 		if ($FileRow[2] != null) {
             //create new child element of stations
-			$childElement = $XMLDoc -> createElement('rec');
+			$child = $XMLFile -> createElement('rec');
+	
+			$childAttrabutes = $XMLFile -> createAttribute('ts'); //creating a timestamp attribute
+			$childAttrabutes -> value = $FileRow[1]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
 		
-				$childElementAtt = $XMLDoc -> createAttribute('ts');
-				$childElementAtt -> value = $FileRow[1];
-				$childElement -> appendChild($childElementAtt);
-			
-				$childElementAtt = $XMLDoc -> createAttribute('nox');
-				$childElementAtt -> value = $FileRow[2];
-				$childElement -> appendChild($childElementAtt);
-			
-			if ($FileRow[3] != null){
-				$childElementAtt = $XMLDoc -> createAttribute('no');
-				$childElementAtt -> value = $FileRow[3];
-				$childElement -> appendChild($childElementAtt);
-			}
-			
-			if ($FileRow[4] != null){
-				$childElementAtt = $XMLDoc -> createAttribute('no2');
-				$childElementAtt -> value = $FileRow[4];
-				$childElement -> appendChild($childElementAtt);
-			}
-
-			
+			$childAttrabutes = $XMLFile -> createAttribute('nox'); //creating a nox attribute
+			$childAttrabutes -> value = $FileRow[2]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
+		
+		if ($FileRow[3] != null){
+			$childAttrabutes = $XMLFile -> createAttribute('no'); //creating a no attribute
+			$childAttrabutes -> value = $FileRow[3]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
+		}
+		
+		if ($FileRow[4] != null){
+			$childAttrabutes = $XMLFile -> createAttribute('no2'); //creating a no2 attribute
+			$childAttrabutes -> value = $FileRow[4]; //getting the value from the correct varible in the line
+			$child -> appendChild($childAttrabutes);
+		}
 		
 		}
-		// append remaining child
-		// elements to root element.
-		$rootElement -> appendChild($childElement);
+		//appending the rest of the child root elements to the xml
+		$root -> appendChild($child);
 		
 	}
 	
-	// Assign variable
-	// to store document
-	// xml format.
-	$strxml = $XMLDoc->saveXML();
+	//veriable for ensuring that the xml format is used
+	$strxml = $XMLFile->saveXML();
 	
-	// Write 'doc' to 
-	// output file 
-	// and close.
-	$output = fopen($GeneratedXMLFile, "w");
-	fwrite($output, $strxml);
-	fclose($output);
+	$exportableXML = fopen($CreatedXMLFile, "w"); //open the xml file in a writable view
+	fwrite($exportableXML, $strxml); //write the converted xml format to 
+	fclose($exportableXML);
 	
 
-	// Saving the document
-	// as is produces an 
-	// extra line at end
-	// of document.
-	// Code below removes 
-	// the last character
-	// and re-adds the
-	// closing bracket
-	// to complete 
-	// output document
-	// and meet line
-	// count.
-	ftruncate(fopen($GeneratedXMLFile, 'r+'), filesize($GeneratedXMLFile) - strlen(PHP_EOL));
-	$append = fopen($GeneratedXMLFile, 'a');
+	//compiling the end of the the file to complete the xml format including the closing of ">"
+	ftruncate(fopen($CreatedXMLFile, 'r+'), filesize($CreatedXMLFile) - strlen(PHP_EOL));
+	$append = fopen($CreatedXMLFile, 'a');
 	fwrite($append, '>');
 	fclose($append);
 	
 }
 
+//run function for each CSV file to create the normilise
+for($i = 0, $size = count($station_list); $i < $size; ++$i) {
 
-
-//////////////////////////////////////////////////////////////////////////
-
-
-
-//run function for each CSV file to create the normilised xml
-
-Normilise("data_188.csv", "data_188.xml");
-Normilise("data_203.csv", "data_203.xml");
-Normilise("data_206.csv", "data_206.xml");
-Normilise("data_209.csv", "data_209.xml");
-Normilise("data_213.csv", "data_213.xml");
-Normilise("data_215.csv", "data_215.xml");
-Normilise("data_228.csv", "data_228.xml");
-Normilise("data_270.csv", "data_270.xml");
-Normilise("data_271.csv", "data_271.xml");
-Normilise("data_375.csv", "data_375.xml");
-Normilise("data_395.csv", "data_395.xml");
-Normilise("data_447.csv", "data_447.xml");
-Normilise("data_452.csv", "data_452.xml");
-Normilise("data_459.csv", "data_459.xml");
-Normilise("data_463.csv", "data_463.xml");
-Normilise("data_481.csv", "data_481.xml");
-Normilise("data_500.csv", "data_500.xml");
-Normilise("data_501.csv", "data_501.xml");
+    Normilise("$station_list[$i].csv", "$station_list[$i].xml");
+}
 
 //removes 'Warning: Undefined array' from the php output
 ob_clean();
